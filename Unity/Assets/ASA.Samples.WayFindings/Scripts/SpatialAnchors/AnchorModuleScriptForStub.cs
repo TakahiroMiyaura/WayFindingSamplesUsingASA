@@ -9,6 +9,10 @@ using System.Threading.Tasks;
 using Microsoft.Azure.SpatialAnchors.Unity;
 using UnityEngine;
 
+
+/// <summary>
+/// Azure Spatial AnchorsのUnity Edtor上で実行するためのスタブクラス
+/// </summary>
 public class AnchorModuleScriptForStub : MonoBehaviour, IAnchorModuleScript
 {
     private readonly Dictionary<string, Vector3> anchorsPosition =
@@ -64,7 +68,9 @@ public class AnchorModuleScriptForStub : MonoBehaviour, IAnchorModuleScript
 
 #region Public Methods
 
+#pragma warning disable 1998
     public async Task StartAzureSession()
+#pragma warning restore 1998
     {
         Debug.Log("\nAnchorModuleScript.StartAzureSession()");
 
@@ -94,7 +100,9 @@ public class AnchorModuleScriptForStub : MonoBehaviour, IAnchorModuleScript
         }
     }
 
+#pragma warning disable 1998
     public async Task StopAzureSession()
+#pragma warning restore 1998
     {
         Debug.Log("\nAnchorModuleScript.StopAzureSession()");
 
@@ -124,7 +132,9 @@ public class AnchorModuleScriptForStub : MonoBehaviour, IAnchorModuleScript
     {
     }
 
+#pragma warning disable 1998
     public async Task UpdateProperties(IDictionary<string, string> currentCloudAnchor, string key, string val,
+#pragma warning restore 1998
         bool replace = true)
     {
         var identifier = locatedAnchors.Where(x => x.Value.Equals(currentCloudAnchor)).Select(x => x.Key)
@@ -216,7 +226,8 @@ public class AnchorModuleScriptForStub : MonoBehaviour, IAnchorModuleScript
 
         var data = (int.Parse(anchorId) + 1).ToString();
 
-        var invoke = CallBackManager.OnLocatedAnchorObject(data, locatedAnchors[data]);
+        GameObject invoke;
+        CallBackManager.OnLocatedAnchorObject(data, locatedAnchors[data],out invoke);
         invoke.transform.position = anchorsPosition[data];
 
         CallBackManager.OnLocatedAnchorComplete();
@@ -245,13 +256,16 @@ public class AnchorModuleScriptForStub : MonoBehaviour, IAnchorModuleScript
         foreach (var id in anchorsToFind)
         {
             Debug.Log($"Anchor locate criteria configured to look for Azure anchor with ID '{id}'");
-            CallBackManager.OnLocatedAnchorObject(id, locatedAnchors[id]);
+            GameObject obj;
+            CallBackManager.OnLocatedAnchorObject(id, locatedAnchors[id],out obj);
         }
 
         CallBackManager.OnLocatedAnchorComplete();
     }
 
+#pragma warning disable 1998
     public async void DeleteAllAzureAnchor()
+#pragma warning restore 1998
     {
         Debug.Log("\nAnchorModuleScript.DeleteAllAzureAnchor()");
 

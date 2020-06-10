@@ -4,19 +4,41 @@
 
 using UnityEngine;
 
+/// <summary>
+/// Azure Spatial Anchorsで周辺を探索可能な範囲を可視化するオブジェクトです、
+/// </summary>
 public class NextAnchorRnageMarker : MonoBehaviour
 {
-    [SerializeField] private float intervals = 0.001f;
+#region Inspector Properites
 
-    [SerializeField] private Vector3 maxRange = Vector3.one;
+    [SerializeField]
+    private float intervals = 0.001f;
+
+    [SerializeField]
+    private Vector3 maxRange = Vector3.one;
 
     private Vector3 initializeScale;
 
-    [SerializeField] private  float threshold = .1f;
+    [SerializeField]
+    private float threshold = .1f;
+
+#endregion
+
+#region Unity Lifecycle
 
     private void Start()
     {
-        initializeScale = transform.localScale;
+        var proxy = FindObjectOfType<AnchorModuleProxy>();
+        if (proxy != null)
+        {
+            var val = proxy.DistanceInMeters;
+            initializeScale = transform.localScale;
+            var vec = new Vector3(1, 1, 1);
+            vec.x = val * 2f / transform.parent.lossyScale.x;
+            vec.y = 1f;
+            vec.z = val * 2f / transform.parent.lossyScale.z;
+            maxRange = vec;
+        }
     }
 
     private void Update()
@@ -28,4 +50,6 @@ public class NextAnchorRnageMarker : MonoBehaviour
 
         transform.localScale = Vector3.Lerp(transform.localScale, maxRange, intervals);
     }
+
+#endregion
 }

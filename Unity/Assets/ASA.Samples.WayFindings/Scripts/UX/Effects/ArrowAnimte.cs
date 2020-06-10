@@ -4,13 +4,23 @@
 
 using UnityEngine;
 
+/// <summary>
+///     オブジェクトが視野外の存在する際に方向を示すインジケーターオブジェクトのアニメーションを定義するクラス。
+/// </summary>
 public class ArrowAnimte : MonoBehaviour
 {
-    [SerializeField] private float intervals = 0.01f;
-
     private float currentOffset = .7f;
-    private float currentTime = 0f;
+    private float currentTime;
     private Material material;
+
+#region Inspector Properites
+
+    [SerializeField]
+    private float intervals = 0.01f;
+
+#endregion
+
+#region Unity Lifecycle
 
     private void Start()
     {
@@ -34,4 +44,6 @@ public class ArrowAnimte : MonoBehaviour
 
         material.mainTextureOffset = new Vector2(currentOffset, 0);
     }
+
+#endregion
 }

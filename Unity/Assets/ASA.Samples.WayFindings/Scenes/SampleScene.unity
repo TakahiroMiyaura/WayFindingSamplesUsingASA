@@ -178,13 +178,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 144d8c9b552a27043baf63c7bcc33176, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BasePointAnchorId: NotInitialized
   CurrentAnchorId: NotInitialized
   Destination: 
-  DestinationPointPrefab: {fileID: 7202026216695015159, guid: 3059a53ca1680024b98c0b7106793d27,
-    type: 3}
-  LinkLinePrefab: {fileID: 4056233014193321575, guid: 951ecc15c5ea0b6488f08af6cbe54395,
-    type: 3}
 --- !u!114 &113434898
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -360,6 +355,18 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!114 &279860446 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5710696784939176563, guid: a1f11485fc76263429ba3709e0c4aa12,
+    type: 3}
+  m_PrefabInstance: {fileID: 825847340}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9541d86e2fd84c1d9990edf0852d74ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &320494142
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1467,7 +1474,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 1.57e-43, z: 0, w: 1.57e-43}
+  m_BoundingSphereOverride: {x: 1e-45, y: 0, z: 1.63e-43, w: 0.26171875}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -1496,6 +1503,36 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Mesh
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5710696784939176563, guid: a1f11485fc76263429ba3709e0c4aa12,
+        type: 3}
+      propertyPath: m_text
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5710696784939176563, guid: a1f11485fc76263429ba3709e0c4aa12,
+        type: 3}
+      propertyPath: m_firstOverflowCharacterIndex
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5710696784939176563, guid: a1f11485fc76263429ba3709e0c4aa12,
+        type: 3}
+      propertyPath: m_textInfo.characterCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5710696784939176563, guid: a1f11485fc76263429ba3709e0c4aa12,
+        type: 3}
+      propertyPath: m_textInfo.wordCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5710696784939176563, guid: a1f11485fc76263429ba3709e0c4aa12,
+        type: 3}
+      propertyPath: m_textInfo.lineCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5710696784939176563, guid: a1f11485fc76263429ba3709e0c4aa12,
+        type: 3}
+      propertyPath: m_textInfo.pageCount
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5710696784939176565, guid: a1f11485fc76263429ba3709e0c4aa12,
         type: 3}
@@ -1606,6 +1643,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: DebugWindow
+      objectReference: {fileID: 0}
+    - target: {fileID: 8203707085482267088, guid: a1f11485fc76263429ba3709e0c4aa12,
+        type: 3}
+      propertyPath: DebugText
+      value: 
+      objectReference: {fileID: 279860446}
+    - target: {fileID: 8203707085482267088, guid: a1f11485fc76263429ba3709e0c4aa12,
+        type: 3}
+      propertyPath: DebugWindowEnabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a1f11485fc76263429ba3709e0c4aa12, type: 3}
@@ -1961,8 +2008,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcbd141a0cfae6a4e813b9fd7b3b748c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  distanceInMeters: 3
-  maxResultCount: 1
+  distanceInMeters: 2
+  maxResultCount: 20
   Expiration: 7
 --- !u!4 &1074703067
 Transform:
@@ -4545,6 +4592,11 @@ PrefabInstance:
         type: 3}
       propertyPath: ButtonPressed.m_PersistentCalls.m_Calls.Array.data[2].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 7585471738096150935, guid: 9cfe4387a3abe8f429eb33dc9dbbe140,
+        type: 3}
+      propertyPath: ButtonPressed.m_PersistentCalls.m_Calls.Array.size
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7585471738096150935, guid: 9cfe4387a3abe8f429eb33dc9dbbe140,
         type: 3}

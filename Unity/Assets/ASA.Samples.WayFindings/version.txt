@@ -1,1 +1,1 @@
-ASA.Samples.WayFindings - v0.9.0.0
+ASA.Samples.WayFindings - v1.0.0.0

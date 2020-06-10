@@ -5,21 +5,33 @@
 using TMPro;
 using UnityEngine;
 
+/// <summary>
+///     Spatial Anchor可視化に利用するアンカー用のコンポーネントです。
+/// </summary>
 public class DestinationPoint : MonoBehaviour
 {
     private float coefficient = -1f;
-
-    [SerializeField]
-    public string DestinationTitle;
-
-    [SerializeField]
-    public string Identifier;
 
     private Transform labelObjectTransform;
     // Start is called before the first frame update
 
     private Transform outerObjectTransform;
     private TextMeshPro textMeshPro;
+
+#region Inspector Properites
+
+    [SerializeField]
+    [Tooltip("Set title of Destination.")]
+    public string DestinationTitle;
+
+    [SerializeField]
+    [Tooltip("Set the anchor id of this object.")]
+    public string Identifier;
+
+#endregion
+
+
+#region Public Properties
 
     public Transform InnerObjectTransform { get; private set; }
 
@@ -29,7 +41,14 @@ public class DestinationPoint : MonoBehaviour
 
     public Transform DirectionIndicatorObjectTransform { get; private set; }
 
-    // Update is called once per frame
+#endregion
+
+
+#region Unity Lifecycle
+
+    /// <summary>
+    ///     初期化処理を実施します
+    /// </summary>
     private void Start()
     {
         outerObjectTransform = transform.GetChild(0);
@@ -44,6 +63,9 @@ public class DestinationPoint : MonoBehaviour
             InnerObjectTransform.localPosition.z);
     }
 
+    /// <summary>
+    ///     フレーム毎に実行する処理を実施します。
+    /// </summary>
     private void Update()
     {
         transform.position = Vector3.Lerp(transform.position,
@@ -55,28 +77,46 @@ public class DestinationPoint : MonoBehaviour
         SetNearbyAutoSearch(enabled);
     }
 
+#endregion
+
+
+#region Private Methods
+
+    /// <summary>
+    ///     アンカーに近づいた場合、自動的にこのアンカーを中心にSpatial Anchorの検索を行うオブジェクトの有効/無効を設定します。
+    /// </summary>
+    /// <param name="enabled">enabled</param>
     private void SetNearbyAutoSearch(bool enabled)
     {
         NearAutoSearchObjectTransform.gameObject.SetActive(!enabled);
     }
 
+    /// <summary>
+    ///     目的地名を表示するラベルオブジェクトの有効/無効を設定します。
+    /// </summary>
+    /// <param name="enabled">enabled</param>
     private void LabelObjectAnimate(bool enabled)
     {
         labelObjectTransform.gameObject.SetActive(enabled);
         textMeshPro.text = DestinationTitle;
     }
 
+    /// <summary>
+    ///     目的地となるオブジェクトのエフェクトの有効/無効を設定します。
+    /// </summary>
+    /// <param name="enabled">enabled</param>
     private void OuterObjectAnimate(bool enabled)
     {
         outerObjectTransform.gameObject.SetActive(enabled);
     }
 
-
+    /// <summary>
+    ///     オブジェクトのアニメーションを行います。
+    /// </summary>
     private void InnerObjectAnimate()
     {
         if (InnerObjectTransform == null)
         {
-            Debug.LogWarning("innerObjectTransform is null.");
             return;
         }
 
@@ -90,4 +130,6 @@ public class DestinationPoint : MonoBehaviour
             coefficient = coefficient * -1f;
         }
     }
+
+#endregion
 }

@@ -5,18 +5,27 @@
 using Microsoft.MixedReality.Toolkit.Utilities;
 using UnityEngine;
 
+/// <summary>
+///     経路上のポイント同士を視覚的につなぐためのLineRendererを制御するためのクラス
+/// </summary>
 [RequireComponent(typeof(SplineDataProvider))]
 public class LinkLineDataProvider : MonoBehaviour
 {
-    [SerializeField] private readonly float curv = 0.4f;
-
-    public GameObject FromPoint;
-    public GameObject ToPoint;
-
     private SplineDataProvider dataProvider;
     private Transform fromTransform;
     private Transform toTransform;
 
+#region Inspector Properites
+
+    [SerializeField]
+    private float curv = 0.4f;
+
+    public GameObject FromPoint;
+    public GameObject ToPoint;
+
+#endregion
+
+#region Unity Lifecycle
 
     // Start is called before the first frame update
     private void Start()
@@ -52,4 +61,6 @@ public class LinkLineDataProvider : MonoBehaviour
         dataProvider.ControlPoints[2].Position = posDelta2;
         dataProvider.ControlPoints[3].Position = pos;
     }
+
+#endregion
 }

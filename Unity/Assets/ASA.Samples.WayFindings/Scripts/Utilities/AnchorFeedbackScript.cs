@@ -2,38 +2,61 @@
 // Released under the MIT license
 // http://opensource.org/licenses/mit-license.php
 
+using System.ComponentModel;
 using TMPro;
 using UnityEngine;
 
+/// <summary>
+/// 指定のラベル欄に処理中ログを出力します。
+/// </summary>
 public class AnchorFeedbackScript : MonoBehaviour
 {
+
+    // ラベル出力を行う処理クラス
     private IAnchorModuleScript anchorModuleScript;
+    private string prevDescription = "";
+    private static object lockObj = new object();
+
+#region Inspector Properites
 
     [SerializeField]
+    [Tooltip("Number of characters per line.")]
     private int cloumnCount = 65;
 
     [SerializeField]
     [Tooltip("Reference to the Text Mesh Pro component on this object.")]
     private TextMeshPro feedbackText = default;
 
-    private string prevDescription = "";
-
     [SerializeField]
+    [Tooltip("number of lines.")]
     private int rowCount = 7;
 
+#endregion
+
+#region Unity Lifecycle
+    /// <summary>
+    /// 起動時の初期処理を実施します。
+    /// </summary>
     private void Awake()
     {
         anchorModuleScript = AnchorModuleProxy.Instance;
 
         anchorModuleScript.OnFeedbackDescription += AnchorModuleScriptOnFeedbackDescription;
     }
+    #endregion
 
-    public static object obj = new object();
+    #region Private Methods
 
+    /// <summary>
+    /// ラベル領域に処理内容を出力する
+    /// </summary>
+    /// <param name="description">記載内容</param>
+    /// <param name="isOverWrite">直前のメッセージを上書きする</param>
+    /// <param name="isReset">メッセージをクリアする</param>
     private void AnchorModuleScriptOnFeedbackDescription(string description, bool isOverWrite = false,
         bool isReset = false)
     {
-        lock (obj)
+        lock (lockObj)
         {
             if (isReset)
             {
@@ -47,7 +70,7 @@ public class AnchorFeedbackScript : MonoBehaviour
                 if (lines.Length + writeRowCount > rowCount)
                 {
                     feedbackText.text = "";
-                    for (var i = writeRowCount; i < rowCount; i++)
+                    for (var i = writeRowCount; i < lines.Length; i++)
                     {
                         feedbackText.text += lines[i] + "\n";
                     }
@@ -64,4 +87,5 @@ public class AnchorFeedbackScript : MonoBehaviour
             prevDescription = description;
         }
     }
+#endregion
 }

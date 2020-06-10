@@ -2,25 +2,32 @@
 // Released under the MIT license
 // http://opensource.org/licenses/mit-license.php
 
-using System.IO;
 using TMPro;
 using UnityEngine;
 
-//#if WINDOWS_UWP
-//using Windows.Storage;
-//#endif
-
+/// <summary>
+/// デバッグ用の情報を出力するクラス
+/// </summary>
 public class DebugWindowMessaging : MonoBehaviour
 {
     private static DebugWindowMessaging debugWindow;
-
-    public bool _debugWindowEnabled = false;
-
-    public TextMeshPro debugText;
     private int lineCount;
+    private static object lockObj = new object();
 
-    private bool parentWindow;
+#region Inspector Properites
 
+    [Tooltip("Enables or disables the output of the log.")]
+    public bool DebugWindowEnabled = false;
+
+    [Tooltip("The text object to be output to the log.")]
+    public TextMeshPro DebugText;
+
+#endregion
+
+#region Unity Lifecycle
+    /// <summary>
+    /// 起動時の初期処理を実施します。
+    /// </summary>
     private void Awake()
     {
         if (debugWindow == null)
@@ -36,53 +43,62 @@ public class DebugWindowMessaging : MonoBehaviour
         Application.logMessageReceived -= HandleLog;
     }
 
-    private static object lockObj = new object();
+#endregion
+
+#region Private Methods
+
+    /// <summary>
+    /// メッセージをテキストフィールドに出力します。
+    /// </summary>
+    /// <param name="message">メッセージ</param>
     private void Write(string message)
     {
-        if (!_debugWindowEnabled)
+        if (!DebugWindowEnabled)
         {
             return;
         }
 
         if (lineCount >= 50)
         {
-            debugText.text = "";
+            DebugText.text = "";
             lineCount = 0;
         }
 
-//        lock (lockObj)
-//        {
-//            var filename = "Logdata.txt";
-//            var path = Application.persistentDataPath;
+        //        lock (lockObj)
+        //        {
+        //            var filename = "Logdata.txt";
+        //            var path = Application.persistentDataPath;
 
-//#if WINDOWS_UWP
-//        StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
-//        path = storageFolder.Path.Replace('\\', '/') + "/";
-//#endif
+        //#if WINDOWS_UWP
+        //        Windows.Storage.StorageFolder storageFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
+        //        path = storageFolder.Path.Replace('\\', '/') + "/";
+        //#endif
 
-//            var filePath = Path.Combine(path, filename);
-//            File.AppendAllText(filePath, message + " \n");
-//        }
+        //            var filePath = System.IO.Path.Combine(path, filename);
+        //            System.IO.File.AppendAllText(filePath, message + " \n");
+        //        }
 
-        debugText.text += message + " \n";
+        DebugText.text += message + " \n";
 
         lineCount++;
     }
 
-
+    /// <summary>
+    /// ログを出力します。
+    /// </summary>
+    /// <param name="message">メッセージ</param>
+    /// <param name="stackTrace">スタックトレース</param>
+    /// <param name="type">ログ種別</param>
     private void HandleLog(string message, string stackTrace, LogType type)
     {
         if (type == LogType.Error)
         {
-            debugWindow.debugText.GetComponent<Renderer>().material.color = Color.red;
+            debugWindow.DebugText.GetComponent<Renderer>().material.color = Color.red;
         }
 
         debugWindow.Write(message);
-        debugWindow.debugText.GetComponent<Renderer>().material.color = Color.white;
+        debugWindow.DebugText.GetComponent<Renderer>().material.color = Color.white;
     }
 
-    public static void Clear()
-    {
-        debugWindow.debugText.text = "";
-    }
+#endregion
 }

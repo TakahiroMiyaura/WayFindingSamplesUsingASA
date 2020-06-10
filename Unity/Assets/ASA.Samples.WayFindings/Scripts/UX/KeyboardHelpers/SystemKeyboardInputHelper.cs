@@ -2,26 +2,22 @@
 // Released under the MIT license
 // http://opensource.org/licenses/mit-license.php
 
-using System.ComponentModel;
 using Microsoft.MixedReality.Toolkit.Experimental.UI;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
 
-namespace Microsoft.MixedReality.Toolkit.Experimental.Extensions.UX
+/// <summary>
+///     Input Text Field using system virtual keyboard.
+/// </summary>
+public class SystemKeyboardInputHelper : MonoBehaviour
 {
-    /// <summary>
-    /// Input Text Field using system virtual keyboard.
-    /// </summary>
-    public class SystemKeyboardInputHelper : MonoBehaviour
+    public enum UIModeEnum
     {
-        public enum UIModeEnum
-        {
-            InputField,
-            Label
-        }
+        InputField,
+        Label
+    }
 
-        #region private fields
+#region private fields
 
 #if WINDOWS_UWP
         private MixedRealityKeyboard wmrKeyboard;
@@ -29,70 +25,83 @@ namespace Microsoft.MixedReality.Toolkit.Experimental.Extensions.UX
         private TouchScreenKeyboard touchscreenKeyboard;
 #endif
 
-        private TextMeshPro inputArea;
-        private TextMeshPro placeholder;
-        #endregion
+    private TextMeshPro inputArea;
+    private TextMeshPro placeholder;
 
-        #region Unity Inspector Properties
+#if WINDOWS_UWP
+    private bool isReflectText = false;
+#endif
 
-        public UIModeEnum UIMode = UIModeEnum.InputField;
+#endregion
 
-        public string text
+#region Unity Inspector Properties
+
+    public UIModeEnum UIMode = UIModeEnum.InputField;
+
+    public string text
+    {
+        get
         {
-            get
+            if (inputArea == null)
             {
-                if (inputArea == null)
-                {
-                    var componentInChildren = GetComponentsInChildren<TextMeshPro>();
-                    placeholder = componentInChildren[0];
-                    inputArea = componentInChildren[1];
-                }
-                return inputArea.text;
+                var componentInChildren = GetComponentsInChildren<TextMeshPro>();
+                placeholder = componentInChildren[0];
+                inputArea = componentInChildren[1];
             }
-            set
-            {
-                if (inputArea == null)
-                {
-                    var componentInChildren = GetComponentsInChildren<TextMeshPro>();
-                    placeholder = componentInChildren[0];
-                    inputArea = componentInChildren[1];
-                }
-                inputArea.text = value;
-                Update();
-            }
+
+            return inputArea.text;
         }
-
-        
-
-        #endregion
-
-        [SerializeField] private MixedRealityKeyboardPreview mixedRealityKeyboardPreview = null;
-
-        private bool isReflectText = false;
-
-        public void OpenSystemKeyboard()
+        set
         {
-            if (UIMode == UIModeEnum.InputField)
+            if (inputArea == null)
             {
+                var componentInChildren = GetComponentsInChildren<TextMeshPro>();
+                placeholder = componentInChildren[0];
+                inputArea = componentInChildren[1];
+            }
+
+            inputArea.text = value;
+            Update();
+        }
+    }
+
+
+    [SerializeField]
+    private MixedRealityKeyboardPreview mixedRealityKeyboardPreview = null;
+
+#endregion
+
+
+#region Public Methods
+
+    public void OpenSystemKeyboard()
+    {
+        if (UIMode == UIModeEnum.InputField)
+        {
 #if WINDOWS_UWP
                 wmrKeyboard.ShowKeyboard(wmrKeyboard.Text, false);
 #elif UNITY_IOS || UNITY_ANDROID
-                touchscreenKeyboard = TouchScreenKeyboard.Open(string.Empty, TouchScreenKeyboardType.Default, false, false,
+                touchscreenKeyboard =
+ TouchScreenKeyboard.Open(string.Empty, TouchScreenKeyboardType.Default, false, false,
                     false, false);
 #endif
-            }
         }
-        
-        private void Start()
-        {
-            var componentInChildren = GetComponentsInChildren<TextMeshPro>();
-            placeholder = componentInChildren[0];
-            inputArea = componentInChildren[1];
+    }
 
-            if (mixedRealityKeyboardPreview != null)
-            {
-                mixedRealityKeyboardPreview.gameObject.SetActive(false);
-            }
+#endregion
+
+#region Unity Lifecycle
+
+    private void Start()
+    {
+        var componentInChildren = GetComponentsInChildren<TextMeshPro>();
+        placeholder = componentInChildren[0];
+        inputArea = componentInChildren[1];
+
+        if (mixedRealityKeyboardPreview != null)
+        {
+            mixedRealityKeyboardPreview.gameObject.SetActive(false);
+        }
 
 #if WINDOWS_UWP
             // Windows mixed reality keyboard initialization goes here
@@ -112,12 +121,12 @@ namespace Microsoft.MixedReality.Toolkit.Experimental.Extensions.UX
                 }
             });
 #endif
-        }
-        
-        private void Update()
+    }
+
+    private void Update()
+    {
+        if (UIMode == UIModeEnum.InputField)
         {
-            if (UIMode == UIModeEnum.InputField)
-            {
 #if WINDOWS_UWP
                 if (wmrKeyboard.Visible)
                 {
@@ -151,19 +160,19 @@ namespace Microsoft.MixedReality.Toolkit.Experimental.Extensions.UX
                     }
                 }
 #endif
-            }
-
-            if (inputArea.text.Length == 0)
-            {
-                inputArea.gameObject.SetActive(false);
-                placeholder.gameObject.SetActive(true);
-            }
-            else
-            {
-                inputArea.gameObject.SetActive(true);
-                placeholder.gameObject.SetActive(false);
-            }
         }
 
+        if (inputArea.text.Length == 0)
+        {
+            inputArea.gameObject.SetActive(false);
+            placeholder.gameObject.SetActive(true);
+        }
+        else
+        {
+            inputArea.gameObject.SetActive(true);
+            placeholder.gameObject.SetActive(false);
+        }
     }
+
+#endregion
 }

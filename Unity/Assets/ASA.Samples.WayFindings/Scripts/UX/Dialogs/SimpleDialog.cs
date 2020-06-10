@@ -7,6 +7,10 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 
+/// <summary>
+/// シンプルなダイアログ処理を実現するクラス。
+/// MRTK V2.4.0に追加されたダイアログの外観をまねて作成しています。
+/// </summary>
 public class SimpleDialog : MonoBehaviour
 {
     private GameObject button1;
@@ -16,7 +20,10 @@ public class SimpleDialog : MonoBehaviour
 
     private TextMeshPro titleObj;
 
-    // Start is called before the first frame update
+#region Unity Lifecycle
+    /// <summary>
+    /// 起動時の初期処理を実施します。
+    /// </summary>
     private void Awake()
     {
         titleObj = transform.GetChild(0).gameObject.GetComponent<TextMeshPro>();
@@ -26,7 +33,16 @@ public class SimpleDialog : MonoBehaviour
         button1 = buttons.GetChild(1).gameObject;
         button2 = buttons.GetChild(2).gameObject;
     }
+#endregion
 
+#region Public Methods
+    /// <summary>
+    /// 表示するダイアログに情報を設定します。
+    /// </summary>
+    /// <param name="title">タイトル</param>
+    /// <param name="message">メッセージ</param>
+    /// <param name="buttonLabels">ボタンのラベル。最大2要素設定します。</param>
+    /// <param name="events">ボタン押下時のイベント</param>
     public void SetDialog(string title, string message, string[] buttonLabels, UnityAction[] events = null)
     {
         titleObj.text = title;
@@ -51,7 +67,15 @@ public class SimpleDialog : MonoBehaviour
             Debug.LogError("button ");
         }
     }
+#endregion
 
+#region Private Methods
+    /// <summary>
+    /// ボタンの情報を設定します。
+    /// </summary>
+    /// <param name="buttonObj">ダイアログ内のボタンオブジェクト</param>
+    /// <param name="buttonLabel">ボタンのラベル情報</param>
+    /// <param name="unityAction">割り当てるイベント処理</param>
     private void SetButtonInformation(GameObject buttonObj, string buttonLabel, UnityAction unityAction = null)
     {
         var pressableButtonHoloLens2 = buttonObj.GetComponent<PressableButtonHoloLens2>();
@@ -68,8 +92,13 @@ public class SimpleDialog : MonoBehaviour
         buttonObj.GetComponentInChildren<TextMeshPro>().text = buttonLabel;
     }
 
+    /// <summary>
+    /// 自身を閉じる処理
+    /// </summary>
     private void OwnClosed()
     {
         Destroy(gameObject);
     }
+#endregion
+
 }

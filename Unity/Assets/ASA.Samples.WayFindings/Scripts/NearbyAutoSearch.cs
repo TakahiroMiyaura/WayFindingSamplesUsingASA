@@ -4,27 +4,65 @@
 
 using System;
 using UnityEngine;
-using UnityEngine.Events;
 
+/// <summary>
+///     アンカーに近づくと1度だけAzure Spatial Anchorsに対して検索を実行するオブジェクトです。
+///     このオブジェクトは親オブジェクトに<see cref="DestinationPoint" />を実装していることを前提にしています。
+/// </summary>
 public class NearbyAutoSearch : MonoBehaviour
 {
     private CapsuleCollider colidar;
     private GameObject headPosition;
-    private bool isProcessingTrigger = false;
-    [System.Serializable]
-    public class TiggerFindNearByAnchorCallback : UnityEvent<string>
-    {
-
-    }
-
-    public UnityEvent<string> OnTiggerFindNearByAnchor = new TiggerFindNearByAnchorCallback();
-
-    [SerializeField]
-    private float radius;
+    private bool isProcessingTrigger;
 
     private DestinationPoint parent;
 
-    // Start is called before the first frame update
+#region Inspector Properites
+
+    [SerializeField]
+    private float radius=.5f;
+
+#endregion
+
+
+#region Private Methods
+
+    /// <summary>
+    ///     アンカーに近づいたときに実行する処理
+    /// </summary>
+    /// <param name="colidar"></param>
+    private void OnTriggerEnter(Collider colidar)
+    {
+        try
+        {
+            if (isProcessingTrigger)
+            {
+                return;
+            }
+
+            if (colidar.gameObject.name.Equals("HeadPosition"))
+            {
+                isProcessingTrigger = true;
+                Debug.Log($"Call Nearby Anchor. id:{parent.Identifier}");
+                // アンカーを中心に周辺のSpatial Anchorの検索を実施します。
+                AnchorModuleProxy.Instance.FindNearByAnchor(parent.Identifier);
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e);
+            throw;
+        }
+    }
+
+#endregion
+
+
+#region Unity Lifecycle
+
+    /// <summary>
+    ///     初期化処理を実施します
+    /// </summary>
     private void Start()
     {
         parent = GetComponentInParent<DestinationPoint>();
@@ -34,21 +72,14 @@ public class NearbyAutoSearch : MonoBehaviour
         headPosition = transform.GetChild(0).gameObject;
     }
 
-    // Update is called once per frame
+    /// <summary>
+    ///     フレーム毎に実行する処理を実施します。
+    /// </summary>
     private void Update()
     {
         headPosition.transform.position = Camera.main.transform.position;
         colidar.isTrigger = true;
     }
 
-    private void OnTriggerEnter(Collider colidar)
-    {
-        if (isProcessingTrigger) {return;}
-
-        if (colidar.gameObject.name.Equals("HeadPosition"))
-        {
-            isProcessingTrigger = true;
-            OnTiggerFindNearByAnchor?.Invoke(parent.Identifier);
-        }
-    }
+#endregion
 }
