@@ -24,6 +24,7 @@ GameObject:
   - component: {fileID: 5199953558728550125}
   - component: {fileID: 1278791258575643779}
   - component: {fileID: 6399903399549792077}
+  - component: {fileID: 4912080540093886627}
   m_Layer: 0
   m_Name: 3.WayFindingOperations
   m_TagString: Untagged
@@ -38,15 +39,15 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4358453458089935403}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0.33380687, y: 0, z: 0, w: 0.94264156}
+  m_LocalPosition: {x: 0, y: -0.2, z: 0.75}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2195515329395947747}
   - {fileID: 4319191508106163882}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 39, y: 0, z: 0}
 --- !u!114 &1278791258575643779
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -96,6 +97,18 @@ MonoBehaviour:
   useFixedVerticalPosition: 0
   fixedVerticalPosition: -0.4
   orientToReferenceDirection: 0
+--- !u!114 &4912080540093886627
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4358453458089935403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c66d3374d2ed3a45920174fd8ef6743, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5788351786792829574
 GameObject:
   m_ObjectHideFlags: 0

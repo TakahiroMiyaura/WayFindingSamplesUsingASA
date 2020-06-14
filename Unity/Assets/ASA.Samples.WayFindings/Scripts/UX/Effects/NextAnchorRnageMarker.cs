@@ -2,54 +2,58 @@
 // Released under the MIT license
 // http://opensource.org/licenses/mit-license.php
 
+using Com.Reseul.ASA.Samples.WayFindings.SpatialAnchors;
 using UnityEngine;
 
-/// <summary>
-/// Azure Spatial Anchorsで周辺を探索可能な範囲を可視化するオブジェクトです、
-/// </summary>
-public class NextAnchorRnageMarker : MonoBehaviour
+namespace Com.Reseul.ASA.Samples.WayFindings.UX.Effects
 {
-#region Inspector Properites
-
-    [SerializeField]
-    private float intervals = 0.001f;
-
-    [SerializeField]
-    private Vector3 maxRange = Vector3.one;
-
-    private Vector3 initializeScale;
-
-    [SerializeField]
-    private float threshold = .1f;
-
-#endregion
-
-#region Unity Lifecycle
-
-    private void Start()
+    /// <summary>
+    ///     Azure Spatial Anchorsで周辺を探索可能な範囲を可視化するオブジェクトです、
+    /// </summary>
+    public class NextAnchorRnageMarker : MonoBehaviour
     {
-        var proxy = FindObjectOfType<AnchorModuleProxy>();
-        if (proxy != null)
-        {
-            var val = proxy.DistanceInMeters;
-            initializeScale = transform.localScale;
-            var vec = new Vector3(1, 1, 1);
-            vec.x = val * 2f / transform.parent.lossyScale.x;
-            vec.y = 1f;
-            vec.z = val * 2f / transform.parent.lossyScale.z;
-            maxRange = vec;
-        }
-    }
+    #region Inspector Properites
 
-    private void Update()
-    {
-        if ((transform.localScale - maxRange).magnitude < threshold)
+        [SerializeField]
+        private float intervals = 0.001f;
+
+        [SerializeField]
+        private Vector3 maxRange = Vector3.one;
+
+        private Vector3 initializeScale;
+
+        [SerializeField]
+        private float threshold = .1f;
+
+    #endregion
+
+    #region Unity Lifecycle
+
+        private void Start()
         {
-            transform.localScale = initializeScale;
+            var proxy = FindObjectOfType<AnchorModuleProxy>();
+            if (proxy != null)
+            {
+                var val = proxy.DistanceInMeters;
+                initializeScale = transform.localScale;
+                var vec = new Vector3(1, 1, 1);
+                vec.x = val * 2f / transform.parent.lossyScale.x;
+                vec.y = 1f;
+                vec.z = val * 2f / transform.parent.lossyScale.z;
+                maxRange = vec;
+            }
         }
 
-        transform.localScale = Vector3.Lerp(transform.localScale, maxRange, intervals);
-    }
+        private void Update()
+        {
+            if ((transform.localScale - maxRange).magnitude < threshold)
+            {
+                transform.localScale = initializeScale;
+            }
 
-#endregion
+            transform.localScale = Vector3.Lerp(transform.localScale, maxRange, intervals);
+        }
+
+    #endregion
+    }
 }

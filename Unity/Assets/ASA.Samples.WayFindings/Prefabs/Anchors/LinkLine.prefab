@@ -48,6 +48,7 @@ LineRenderer:
   m_MotionVectors: 0
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -335,6 +336,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3146e9abc0f65b4cb222ea9283de499, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ToPoint: {fileID: 0}
-  FromPoint: {fileID: 0}
   curv: 0.4

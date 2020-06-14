@@ -5,310 +5,273 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.MixedReality.Toolkit.UI;
-using TMPro;
+using Com.Reseul.ASA.Samples.WayFindings.Anchors;
+using Com.Reseul.ASA.Samples.WayFindings.Factories;
+using Com.Reseul.ASA.Samples.WayFindings.SpatialAnchors;
+using Com.Reseul.ASA.Samples.WayFindings.UX.Dialogs;
+using Com.Reseul.ASA.Samples.WayFindings.UX.Menus;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Events;
 
-/// <summary>
-///     経路探索を実施するためのクラス
-/// </summary>
-public class WayFindingManager : MonoBehaviour, IASACallBackManager
+namespace Com.Reseul.ASA.Samples.WayFindings
 {
-    private static object lockObj = new object();
-    private GameObject basePointAnchor;
-
-    private string basePointAnchorId;
-    private IDictionary<string, string> basePointAppProperties;
-    private string currentAnchorId = RouteGuideInformation.ANCHOR_ID_NOT_INITIALIZED;
-
-#region Static Methods
-
-    public static WayFindingManager Instance
-    {
-        get
-        {
-            var module = FindObjectsOfType<WayFindingManager>();
-            if (module.Length == 1)
-            {
-                return module[0];
-            }
-
-            Debug.LogWarning(
-                "Not found an existing SetRouteGuideManager in your scene. The SetRouteGuideManager requires only one.");
-            return null;
-        }
-    }
-
-#endregion
-
-#region Inspector Properites
-
-    [Tooltip("Set the destination title.")]
-    public string Destination;
-
-    [Tooltip("Set a prefab to visualize Spatial Anchor.")]
-    public GameObject DestinationPointPrefab;
-
-
-    [Tooltip("Set a GameObject of Dialog")]
-    public SimpleDialog Dialog;
-
-    [Tooltip("Set a GameObject of Instruction.")]
-    public GameObject Instruction;
-
-    [Tooltip("Set a GameObject of LinkLine.")]
-    public GameObject LinkLinePrefab;
-
-    [Tooltip("Set a GameObject of Menu.")]
-    public GameObject Operations;
-
-    [Tooltip("Set a GameObject of RouteGuideInformation.")]
-    public RouteGuideInformation RouteInfo;
-
-    [Tooltip("Set a GameObject of Select Destination Menu.")]
-    public GameObject SelectDestinationMenu;
-
-#endregion
-
-#region Public Methods
-
     /// <summary>
-    ///     Spatial Anchorの設置完了時に実行する処理
-    ///     Spatial Anchorの設置がすべて完了した場合に実行されます。
+    ///     経路探索を実施するためのクラス
     /// </summary>
-    public void OnLocatedAnchorComplete()
+    public class WayFindingManager : MonoBehaviour, IASACallBackManager
     {
-        try
+        private static readonly object lockObj = new object();
+
+        private string basePointAnchorId;
+        private IDictionary<string, string> basePointAppProperties;
+        private string currentAnchorId = RouteGuideInformation.ANCHOR_ID_NOT_INITIALIZED;
+        private SettingPointAnchor settingPointAnchor;
+
+    #region Static Methods
+
+        public static WayFindingManager Instance
         {
-            foreach (var current in RouteInfo.LocatedAnchors.Keys)
+            get
             {
-                Debug.Log(
-                    $"@Current:{current} IsLinkLineCreated:{RouteInfo.LocatedAnchors[current].IsLinkLineCreated}");
-                var appProperties = RouteInfo.LocatedAnchors[current].AppProperties;
-                if (!RouteInfo.LocatedAnchors[current].IsLinkLineCreated)
+                var module = FindObjectsOfType<WayFindingManager>();
+                if (module.Length == 1)
                 {
-                    RouteInfo.LocatedAnchors[current].IsLinkLineCreated = true;
-                    var dest = RouteInfo.LocatedAnchors[current].AnchorObject;
-                    if (appProperties.ContainsKey(RouteGuideInformation.PREV_ANCHOR_ID))
+                    return module[0];
+                }
+
+                Debug.LogWarning(
+                    "Not found an existing SetRouteGuideManager in your scene. The SetRouteGuideManager requires only one.");
+                return null;
+            }
+        }
+
+    #endregion
+
+    #region Inspector Properites
+
+        [Tooltip("Set the destination title.")]
+        public string Destination;
+
+        [Tooltip("Set a GameObject of Instruction.")]
+        public GameObject Instruction;
+
+        [Tooltip("Set a GameObject of Menu.")]
+        public WayFindingMenu Menu;
+
+        [Tooltip("Set a GameObject of RouteGuideInformation.")]
+        public RouteGuideInformation RouteInfo;
+
+        [Tooltip("Set a GameObject of Select Destination Menu.")]
+        public SelectDestinationMenu SelectDestinationMenu;
+
+    #endregion
+
+    #region Public Methods
+
+        /// <summary>
+        ///     Spatial Anchorの設置完了時に実行する処理
+        ///     Spatial Anchorの設置がすべて完了した場合に実行されます。
+        /// </summary>
+        public void OnLocatedAnchorComplete()
+        {
+            try
+            {
+                foreach (var current in RouteInfo.LocatedAnchors.Keys)
+                {
+                    Debug.Log(
+                        $"Current:{current} IsLinkLineCreated:{RouteInfo.LocatedAnchors[current].IsLinkLineCreated}");
+                    var appProperties = RouteInfo.LocatedAnchors[current].AppProperties;
+                    if (!RouteInfo.LocatedAnchors[current].IsLinkLineCreated)
                     {
-                        var key = appProperties[RouteGuideInformation.PREV_ANCHOR_ID];
-                        if (RouteInfo.LocatedAnchors.TryGetValue(key, out var anchorInfo))
+                        RouteInfo.LocatedAnchors[current].IsLinkLineCreated = true;
+                        var dest = RouteInfo.LocatedAnchors[current].AnchorObject;
+                        if (appProperties.ContainsKey(RouteGuideInformation.PREV_ANCHOR_ID))
                         {
-                            var prevObj = anchorInfo.AnchorObject;
-                            Debug.Log($"@LinkLine:{prevObj.name} to {dest.name}");
-
-                            var animation = prevObj.GetComponentInChildren<DestinationPoint>();
-                            var indicator = prevObj.GetComponentInChildren<NextAnchorRnageMarker>();
-                            if (animation != null)
+                            var key = appProperties[RouteGuideInformation.PREV_ANCHOR_ID];
+                            if (RouteInfo.LocatedAnchors.TryGetValue(key, out var anchorInfo))
                             {
-                                animation.NearAutoSearchObjectTransform.gameObject.SetActive(false);
-                                animation.DirectionIndicatorObjectTransform.gameObject.SetActive(false);
-                            }
-                            else if (indicator != null)
-                            {
-                                indicator.gameObject.SetActive(false);
-                            }
+                                var pointObj = anchorInfo.AnchorObject.GetComponent<DestinationPointAnchor>();
+                                pointObj?.DisabledEffects();
+                                var basePointObj = anchorInfo.AnchorObject.GetComponent<SettingPointAnchor>();
+                                basePointObj?.DisabledEffects();
 
-                            Debug.Log("@@ Create LinkLine Object.");
-                            var linkLine = Instantiate(LinkLinePrefab);
-                            linkLine.name = "Link:" + key + " > " + current;
-                            linkLine.transform.parent = RouteInfo.RootLinkLineObjects;
-                            var linkLineComponent = linkLine.GetComponent<LinkLineDataProvider>();
-                            linkLineComponent.FromPoint = prevObj;
-                            linkLineComponent.ToPoint = dest;
-                            Debug.Log("@@ Create LinkLine Object....successfully");
+                                Debug.Log($"LinkLine:{anchorInfo.AnchorObject.name} to {dest.name}");
+                                LinkLineGenerateFactory.CreateLinkLineObject(anchorInfo.AnchorObject, dest,
+                                    RouteInfo.RootLinkLineObjects.transform);
+                            }
                         }
                     }
                 }
             }
-        }
-        catch (Exception e)
-        {
-            Debug.Log(e);
-            throw;
-        }
-    }
-
-    /// <summary>
-    ///     Spatial Anchorの可視化に必要なオブジェクトの生成を行います。
-    ///     Spatial Anchorの設置が完了した場合に発生するイベント内で実行されます。
-    /// </summary>
-    /// <param name="identifier">AnchorId</param>
-    /// <param name="appProperties">Spatial Anchorに含まれるAppProperties</param>
-    /// <param name="gameObject">可視化に利用するオブジェクト</param>
-    /// <returns>アンカーの設置対象か。trueの場合設置対象</returns>
-    public bool OnLocatedAnchorObject(string identifier,
-        IDictionary<string, string> appProperties, out GameObject gameObject)
-    {
-        try
-        {
-            appProperties.TryGetValue(RouteGuideInformation.ANCHOR_TYPE, out var anchorType);
-
-            var destinations = new string[0];
-            if (appProperties.TryGetValue(RouteGuideInformation.DESTINATION_TITLE, out var destination))
+            catch (Exception e)
             {
-                destinations = destination.Split(',');
+                Debug.Log(e);
+                throw;
             }
+        }
 
-            // 指定ルート以外のアンカー情報に対しては可視化を行わない。
-            if (!destinations.Any(x => x.Equals(Destination)))
+        /// <summary>
+        ///     Spatial Anchorの可視化に必要なオブジェクトの生成を行います。
+        ///     Spatial Anchorの設置が完了した場合に発生するイベント内で実行されます。
+        /// </summary>
+        /// <param name="identifier">AnchorId</param>
+        /// <param name="appProperties">Spatial Anchorに含まれるAppProperties</param>
+        /// <param name="gameObject">可視化に利用するオブジェクト</param>
+        /// <returns>アンカーの設置対象か。trueの場合設置対象</returns>
+        public bool OnLocatedAnchorObject(string identifier,
+            IDictionary<string, string> appProperties, out GameObject gameObject)
+        {
+            try
             {
-                gameObject = null;
-                return false;
-            }
+                appProperties.TryGetValue(RouteGuideInformation.ANCHOR_TYPE, out var anchorType);
 
-            GameObject point;
-            if (!RouteInfo.LocatedAnchors.ContainsKey(identifier))
-            {
-                point = Instantiate(DestinationPointPrefab);
-                lock (lockObj)
+                var destinations = new string[0];
+                if (appProperties.TryGetValue(RouteGuideInformation.DESTINATION_TITLE, out var destination))
                 {
-                    RouteInfo.LocatedAnchors.Add(identifier,
-                        new RouteGuideInformation.AnchorInfo(appProperties, point,
-                            currentAnchorId.Equals(RouteGuideInformation.ANCHOR_ID_NOT_INITIALIZED)));
+                    destinations = destination.Split(',');
                 }
-            }
-            else
-            {
-                point = RouteInfo.LocatedAnchors[identifier].AnchorObject;
 
-                RouteInfo.LocatedAnchors[identifier] =
-                    new RouteGuideInformation.AnchorInfo(appProperties, point,
-                        currentAnchorId.Equals(RouteGuideInformation.ANCHOR_ID_NOT_INITIALIZED));
-            }
-
-            point.name = "Anchor:" + identifier;
-
-            point.transform.parent = RouteInfo.RootPointObjects;
-
-            currentAnchorId = identifier;
-
-            var dest = point.GetComponent<DestinationPoint>();
-
-            if (dest != null)
-            {
-                dest.Identifier = identifier;
-                if (RouteGuideInformation.ANCHOR_TYPE_DESTINATION.Equals(anchorType))
+                // 指定ルート以外のアンカー情報に対しては可視化を行わない。
+                if (!destinations.Any(x => x.Equals(Destination)))
                 {
-                    dest.DestinationTitle = destination;
+                    gameObject = null;
+                    return false;
                 }
-            }
 
-            gameObject = point;
-            return true;
-        }
-        catch (Exception e)
-        {
-            Debug.Log(e);
-            throw;
-        }
-    }
+                DestinationPointAnchor point;
 
-    /// <summary>
-    ///     オブジェクトの有効無効を設定します。
-    /// </summary>
-    /// <param name="enabled"></param>
-    public void IsContentsStart(bool enabled, string anchorId = null,
-        GameObject anchorObj = null, IDictionary<string, string> appProperties = null)
-    {
-        try
-        {
-            AnchorModuleProxy.Instance.SetASACallBackManager(this);
-
-            Instruction?.SetActive(enabled);
-            RouteInfo?.gameObject.SetActive(enabled);
-            Operations?.SetActive(enabled);
-            SelectDestinationMenu?.SetActive(enabled);
-            if (anchorId == null || anchorObj == null || appProperties == null)
-            {
-                Debug.LogWarning("null reference the base point anchor information.");
-                return;
-            }
-
-            basePointAnchorId = anchorId;
-            basePointAnchor = anchorObj;
-            var locatedAnchors = RouteInfo.LocatedAnchors;
-            if (!locatedAnchors.ContainsKey(basePointAnchorId))
-            {
-                locatedAnchors.Add(basePointAnchorId,
-                    new RouteGuideInformation.AnchorInfo(appProperties, basePointAnchor));
-            }
-
-            basePointAppProperties = appProperties;
-            if (basePointAppProperties.TryGetValue(RouteGuideInformation.DESTINATION_TITLE, out var rowData))
-            {
-                var destinations = rowData.Split(',');
-                if (destinations.Length > 0)
+                if (!RouteInfo.LocatedAnchors.ContainsKey(identifier))
                 {
-                    var button = SelectDestinationMenu.transform.GetChild(1).GetChild(0).gameObject;
-                    SetSelectButton(button, destinations[0]);
-
-                    for (var i = 1; i < destinations.Length; i++)
+                    //アンカーの可視化が完了していない場合はアンカーを生成する。
+                    point = AnchorGenerateFactory.GenerateDestinationPointAnchor(RouteInfo.RootPointObjects);
+                    lock (lockObj)
                     {
-                        button = Instantiate(button);
-                        button.transform.parent = SelectDestinationMenu.transform.GetChild(1);
-                        SetSelectButton(button, destinations[i]);
+                        RouteInfo.LocatedAnchors.Add(identifier,
+                            new RouteGuideInformation.AnchorInfo(appProperties, point.gameObject,
+                                currentAnchorId.Equals(RouteGuideInformation.ANCHOR_ID_NOT_INITIALIZED)));
                     }
                 }
+                else
+                {
+                    //すでにアンカーが可視化されている場合はそのオブジェクトを取得する。
+                    point = RouteInfo.LocatedAnchors[identifier].AnchorObject.GetComponent<DestinationPointAnchor>();
+
+                    RouteInfo.LocatedAnchors[identifier] =
+                        new RouteGuideInformation.AnchorInfo(appProperties, point.gameObject,
+                            currentAnchorId.Equals(RouteGuideInformation.ANCHOR_ID_NOT_INITIALIZED));
+                }
+
+                currentAnchorId = identifier;
+
+                point.Identifier = identifier;
+                if (RouteGuideInformation.ANCHOR_TYPE_DESTINATION.Equals(anchorType))
+                {
+                    point.DestinationTitle = destination;
+                }
+
+                gameObject = point.gameObject;
+                return true;
+            }
+            catch (Exception e)
+            {
+                Debug.Log(e);
+                throw;
             }
         }
-        catch (Exception e)
-        {
-            Debug.Log(e);
-            throw;
-        }
-    }
 
-    /// <summary>
-    ///     アプリケーションを終了します。
-    /// </summary>
-    public void Exit()
-    {
+        /// <summary>
+        ///     オブジェクトの有効無効を設定します。
+        /// </summary>
+        /// <param name="enabled"></param>
+        public void Initialize(bool enabled, string anchorId = null,
+            SettingPointAnchor anchorObj = null, IDictionary<string, string> appProperties = null)
+        {
+            try
+            {
+                if (anchorId == null || anchorObj == null || appProperties == null)
+                {
+                    Debug.LogWarning("null reference the base point anchor information.");
+                    return;
+                }
+
+                AnchorModuleProxy.Instance.SetASACallBackManager(this);
+
+                Dialog.OpenDialog("Way Destination.",
+                    "Please select the destination.\nWhen you select a destination, the application searches the anchors and places Spatial Anchor. When you approach this Spatial Anchor, it will automatically search for the next anchor . Finally, you reach the destination, you're done.",
+                    new[] {"Ok"}, new[]
+                    {
+                        new UnityAction(() =>
+                        {
+                            Instruction?.SetActive(enabled);
+                            RouteInfo?.gameObject.SetActive(enabled);
+                            if (basePointAppProperties.TryGetValue(RouteGuideInformation.DESTINATION_TITLE,
+                                out var rowData))
+                            {
+                                var destinations = rowData.Split(',');
+                                SelectDestinationMenu.GenerateDestination(destinations, OnSelectDestination);
+                                SelectDestinationMenu.SetActive(enabled);
+                            }
+
+                            Menu.ChangeStatus(BaseMenu.MODE_INITIALIZE);
+                        })
+                    });
+
+                basePointAnchorId = anchorId;
+                settingPointAnchor = anchorObj;
+                var locatedAnchors = RouteInfo.LocatedAnchors;
+                if (!locatedAnchors.ContainsKey(basePointAnchorId))
+                {
+                    locatedAnchors.Add(basePointAnchorId,
+                        new RouteGuideInformation.AnchorInfo(appProperties, settingPointAnchor.gameObject));
+                }
+
+                basePointAppProperties = appProperties;
+            }
+            catch (Exception e)
+            {
+                Debug.Log(e);
+                throw;
+            }
+        }
+
+
+        /// <summary>
+        ///     アプリケーションを終了します。
+        /// </summary>
+        public void Exit()
+        {
 #if UNITY_EDITOR
-        EditorApplication.isPlaying = false;
+            EditorApplication.isPlaying = false;
 #elif UNITY_STANDALONE
         Windows.ApplicationModel.Core.CoreApplication.Exit();
 #endif
+        }
+
+    #endregion
+
+    #region Private Methods
+
+        /// <summary>
+        ///     選択された目的地名を設定します。
+        /// </summary>
+        /// <param name="destination"></param>
+        private void OnSelectDestination(string destination)
+        {
+            SelectDestinationMenu.SetActive(false);
+            Destination = destination;
+            FindNearbyAnchors(basePointAnchorId);
+        }
+
+        /// <summary>
+        ///     指定されたAnchorId周辺に存在するSpatial Anchorの探索を行います。
+        /// </summary>
+        /// <param name="identifier"></param>
+        private void FindNearbyAnchors(string identifier)
+        {
+            AnchorModuleProxy.Instance.FindNearByAnchor(identifier);
+        }
+
+    #endregion
     }
-
-#endregion
-
-#region Private Methods
-
-    /// <summary>
-    ///     目的地選択ボタンにに目的地名を設定します。
-    /// </summary>
-    /// <param name="button">ボタンオブジェクト</param>
-    /// <param name="destinaion">目的値名</param>
-    private void SetSelectButton(GameObject button, string destinaion)
-    {
-        button.name = destinaion;
-        button.GetComponentInChildren<TextMeshPro>().text = destinaion;
-        button.GetComponent<Interactable>().OnClick.AddListener(() => OnSelectDestination(destinaion));
-        button.GetComponent<PressableButtonHoloLens2>().ButtonPressed
-            .AddListener(() => OnSelectDestination(destinaion));
-    }
-
-    /// <summary>
-    ///     選択された目的地名を設定します。
-    /// </summary>
-    /// <param name="d"></param>
-    private void OnSelectDestination(string d)
-    {
-        SelectDestinationMenu.SetActive(false);
-        Destination = d;
-        FindNearbyAnchors(basePointAnchorId);
-    }
-
-    /// <summary>
-    ///     指定されたAnchorId周辺に存在するSpatial Anchorの探索を行います。
-    /// </summary>
-    /// <param name="identifier"></param>
-    private void FindNearbyAnchors(string identifier)
-    {
-        AnchorModuleProxy.Instance.FindNearByAnchor(identifier);
-    }
-
-#endregion
 }

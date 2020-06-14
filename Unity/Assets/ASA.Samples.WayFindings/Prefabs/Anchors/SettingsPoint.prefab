@@ -74,8 +74,9 @@ GameObject:
   - component: {fileID: 1274230949204500389}
   - component: {fileID: 1274230949204500415}
   - component: {fileID: 1264994307501552187}
+  - component: {fileID: 7550799143880321972}
   m_Layer: 0
-  m_Name: ParentAnchor
+  m_Name: SettingsPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -178,7 +179,7 @@ MonoBehaviour:
   oneHandRotationModeNear: 6
   oneHandRotationModeFar: 6
   releaseBehavior: 3
-  constraintOnRotation: 0
+  constraintOnRotation: 2
   useLocalSpaceForConstraint: 0
   constraintOnMovement: 0
   smoothingActive: 1
@@ -230,6 +231,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTetherWhenManipulating: 0
+--- !u!114 &7550799143880321972
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1274230949204500388}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6517ca713100614ca23b088e1e09ea9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1799714382220972030
 GameObject:
   m_ObjectHideFlags: 0
@@ -1634,11 +1647,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: c4867650c78612948ac0c914c70aff76, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: c4867650c78612948ac0c914c70aff76, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: c4867650c78612948ac0c914c70aff76, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1666,15 +1679,15 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: c4ec08dfb82796c49aed3fd3029266d1, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c4867650c78612948ac0c914c70aff76, type: 3}
---- !u!1 &8517195971473406072 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 100000, guid: c4867650c78612948ac0c914c70aff76,
-    type: 3}
-  m_PrefabInstance: {fileID: 8517195971473374936}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8517195971472974936 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: c4867650c78612948ac0c914c70aff76,
+    type: 3}
+  m_PrefabInstance: {fileID: 8517195971473374936}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &8517195971473406072 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 100000, guid: c4867650c78612948ac0c914c70aff76,
     type: 3}
   m_PrefabInstance: {fileID: 8517195971473374936}
   m_PrefabAsset: {fileID: 0}

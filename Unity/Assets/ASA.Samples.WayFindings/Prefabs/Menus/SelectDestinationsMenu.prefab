@@ -63,8 +63,9 @@ GameObject:
   - component: {fileID: 892642707629563632}
   - component: {fileID: 1254808092}
   - component: {fileID: 1254808093}
+  - component: {fileID: 8063207538738362704}
   m_Layer: 0
-  m_Name: SelectDestinations
+  m_Name: SelectDestinationsMenu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -135,6 +136,18 @@ MonoBehaviour:
   additionalOffset: {x: 0, y: 0, z: 0}
   additionalRotation: {x: 0, y: 0, z: 0}
   updateSolvers: 1
+--- !u!114 &8063207538738362704
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 892642707629563633}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d00bf6c0f17559046b4fa338e1c1cf67, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3239599315476332884
 GameObject:
   m_ObjectHideFlags: 0
@@ -188,6 +201,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -243,6 +257,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []

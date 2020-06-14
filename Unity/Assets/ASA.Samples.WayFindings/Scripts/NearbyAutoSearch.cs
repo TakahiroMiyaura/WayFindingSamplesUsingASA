@@ -3,83 +3,88 @@
 // http://opensource.org/licenses/mit-license.php
 
 using System;
+using Com.Reseul.ASA.Samples.WayFindings.Anchors;
+using Com.Reseul.ASA.Samples.WayFindings.SpatialAnchors;
 using UnityEngine;
 
-/// <summary>
-///     アンカーに近づくと1度だけAzure Spatial Anchorsに対して検索を実行するオブジェクトです。
-///     このオブジェクトは親オブジェクトに<see cref="DestinationPoint" />を実装していることを前提にしています。
-/// </summary>
-public class NearbyAutoSearch : MonoBehaviour
+namespace Com.Reseul.ASA.Samples.WayFindings
 {
-    private CapsuleCollider colidar;
-    private GameObject headPosition;
-    private bool isProcessingTrigger;
-
-    private DestinationPoint parent;
-
-#region Inspector Properites
-
-    [SerializeField]
-    private float radius=.5f;
-
-#endregion
-
-
-#region Private Methods
-
     /// <summary>
-    ///     アンカーに近づいたときに実行する処理
+    ///     アンカーに近づくと1度だけAzure Spatial Anchorsに対して検索を実行するオブジェクトです。
+    ///     このオブジェクトは親オブジェクトに<see cref="DestinationPointAnchor" />を実装していることを前提にしています。
     /// </summary>
-    /// <param name="colidar"></param>
-    private void OnTriggerEnter(Collider colidar)
+    public class NearbyAutoSearch : MonoBehaviour
     {
-        try
-        {
-            if (isProcessingTrigger)
-            {
-                return;
-            }
+        private CapsuleCollider colidar;
+        private GameObject headPosition;
+        private bool isProcessingTrigger;
 
-            if (colidar.gameObject.name.Equals("HeadPosition"))
+        private DestinationPointAnchor parent;
+
+    #region Inspector Properites
+
+        [SerializeField]
+        private float radius = .5f;
+
+    #endregion
+
+
+    #region Private Methods
+
+        /// <summary>
+        ///     アンカーに近づいたときに実行する処理
+        /// </summary>
+        /// <param name="colidar"></param>
+        private void OnTriggerEnter(Collider colidar)
+        {
+            try
             {
-                isProcessingTrigger = true;
-                Debug.Log($"Call Nearby Anchor. id:{parent.Identifier}");
-                // アンカーを中心に周辺のSpatial Anchorの検索を実施します。
-                AnchorModuleProxy.Instance.FindNearByAnchor(parent.Identifier);
+                if (isProcessingTrigger)
+                {
+                    return;
+                }
+
+                if (colidar.gameObject.name.Equals("HeadPosition"))
+                {
+                    isProcessingTrigger = true;
+                    Debug.Log($"Call Nearby Anchor. id:{parent.Identifier}");
+                    // アンカーを中心に周辺のSpatial Anchorの検索を実施します。
+                    AnchorModuleProxy.Instance.FindNearByAnchor(parent.Identifier);
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.Log(e);
+                throw;
             }
         }
-        catch (Exception e)
+
+    #endregion
+
+
+    #region Unity Lifecycle
+
+        /// <summary>
+        ///     初期化処理を実施します
+        /// </summary>
+        private void Start()
         {
-            Debug.Log(e);
-            throw;
+            parent = GetComponentInParent<DestinationPointAnchor>();
+            colidar = GetComponent<CapsuleCollider>();
+            colidar.radius = radius;
+
+            headPosition = transform.GetChild(0).gameObject;
         }
+
+        /// <summary>
+        ///     フレーム毎に実行する処理を実施します。
+        /// </summary>
+        private void Update()
+        {
+            headPosition.transform.position = Camera.main.transform.position;
+            colidar.isTrigger = true;
+        }
+
+    #endregion
     }
-
-#endregion
-
-
-#region Unity Lifecycle
-
-    /// <summary>
-    ///     初期化処理を実施します
-    /// </summary>
-    private void Start()
-    {
-        parent = GetComponentInParent<DestinationPoint>();
-        colidar = GetComponent<CapsuleCollider>();
-        colidar.radius = radius;
-
-        headPosition = transform.GetChild(0).gameObject;
-    }
-
-    /// <summary>
-    ///     フレーム毎に実行する処理を実施します。
-    /// </summary>
-    private void Update()
-    {
-        headPosition.transform.position = Camera.main.transform.position;
-        colidar.isTrigger = true;
-    }
-
-#endregion
 }

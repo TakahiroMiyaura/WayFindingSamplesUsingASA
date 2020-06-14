@@ -6,18 +6,20 @@ using Microsoft.MixedReality.Toolkit.Experimental.UI;
 using TMPro;
 using UnityEngine;
 
-/// <summary>
-///     Input Text Field using system virtual keyboard.
-/// </summary>
-public class SystemKeyboardInputHelper : MonoBehaviour
+namespace Com.Reseul.ASA.Samples.WayFindings.UX.KeyboardHelpers
 {
-    public enum UIModeEnum
+    /// <summary>
+    ///     Input Text Field using system virtual keyboard.
+    /// </summary>
+    public class SystemKeyboardInputHelper : MonoBehaviour
     {
-        InputField,
-        Label
-    }
+        public enum UIModeEnum
+        {
+            InputField,
+            Label
+        }
 
-#region private fields
+    #region private fields
 
 #if WINDOWS_UWP
         private MixedRealityKeyboard wmrKeyboard;
@@ -25,59 +27,59 @@ public class SystemKeyboardInputHelper : MonoBehaviour
         private TouchScreenKeyboard touchscreenKeyboard;
 #endif
 
-    private TextMeshPro inputArea;
-    private TextMeshPro placeholder;
+        private TextMeshPro inputArea;
+        private TextMeshPro placeholder;
 
 #if WINDOWS_UWP
     private bool isReflectText = false;
 #endif
 
-#endregion
+    #endregion
 
-#region Unity Inspector Properties
+    #region Unity Inspector Properties
 
-    public UIModeEnum UIMode = UIModeEnum.InputField;
+        public UIModeEnum UIMode = UIModeEnum.InputField;
 
-    public string text
-    {
-        get
+        public string text
         {
-            if (inputArea == null)
+            get
             {
-                var componentInChildren = GetComponentsInChildren<TextMeshPro>();
-                placeholder = componentInChildren[0];
-                inputArea = componentInChildren[1];
-            }
+                if (inputArea == null)
+                {
+                    var componentInChildren = GetComponentsInChildren<TextMeshPro>();
+                    placeholder = componentInChildren[0];
+                    inputArea = componentInChildren[1];
+                }
 
-            return inputArea.text;
-        }
-        set
-        {
-            if (inputArea == null)
+                return inputArea.text;
+            }
+            set
             {
-                var componentInChildren = GetComponentsInChildren<TextMeshPro>();
-                placeholder = componentInChildren[0];
-                inputArea = componentInChildren[1];
+                if (inputArea == null)
+                {
+                    var componentInChildren = GetComponentsInChildren<TextMeshPro>();
+                    placeholder = componentInChildren[0];
+                    inputArea = componentInChildren[1];
+                }
+
+                inputArea.text = value;
+                Update();
             }
-
-            inputArea.text = value;
-            Update();
         }
-    }
 
 
-    [SerializeField]
-    private MixedRealityKeyboardPreview mixedRealityKeyboardPreview = null;
+        [SerializeField]
+        private MixedRealityKeyboardPreview mixedRealityKeyboardPreview = null;
 
-#endregion
+    #endregion
 
 
-#region Public Methods
+    #region Public Methods
 
-    public void OpenSystemKeyboard()
-    {
-        if (UIMode == UIModeEnum.InputField)
+        public void OpenSystemKeyboard()
         {
+            if (UIMode == UIModeEnum.InputField)
+            {
 #if WINDOWS_UWP
                 wmrKeyboard.ShowKeyboard(wmrKeyboard.Text, false);
 #elif UNITY_IOS || UNITY_ANDROID
@@ -85,23 +87,23 @@ public class SystemKeyboardInputHelper : MonoBehaviour
  TouchScreenKeyboard.Open(string.Empty, TouchScreenKeyboardType.Default, false, false,
                     false, false);
 #endif
+            }
         }
-    }
 
-#endregion
+    #endregion
 
-#region Unity Lifecycle
+    #region Unity Lifecycle
 
-    private void Start()
-    {
-        var componentInChildren = GetComponentsInChildren<TextMeshPro>();
-        placeholder = componentInChildren[0];
-        inputArea = componentInChildren[1];
-
-        if (mixedRealityKeyboardPreview != null)
+        private void Start()
         {
-            mixedRealityKeyboardPreview.gameObject.SetActive(false);
-        }
+            var componentInChildren = GetComponentsInChildren<TextMeshPro>();
+            placeholder = componentInChildren[0];
+            inputArea = componentInChildren[1];
+
+            if (mixedRealityKeyboardPreview != null)
+            {
+                mixedRealityKeyboardPreview.gameObject.SetActive(false);
+            }
 
 #if WINDOWS_UWP
             // Windows mixed reality keyboard initialization goes here
@@ -121,12 +123,12 @@ public class SystemKeyboardInputHelper : MonoBehaviour
                 }
             });
 #endif
-    }
+        }
 
-    private void Update()
-    {
-        if (UIMode == UIModeEnum.InputField)
+        private void Update()
         {
+            if (UIMode == UIModeEnum.InputField)
+            {
 #if WINDOWS_UWP
                 if (wmrKeyboard.Visible)
                 {
@@ -160,19 +162,20 @@ public class SystemKeyboardInputHelper : MonoBehaviour
                     }
                 }
 #endif
+            }
+
+            if (inputArea.text.Length == 0)
+            {
+                inputArea.gameObject.SetActive(false);
+                placeholder.gameObject.SetActive(true);
+            }
+            else
+            {
+                inputArea.gameObject.SetActive(true);
+                placeholder.gameObject.SetActive(false);
+            }
         }
 
-        if (inputArea.text.Length == 0)
-        {
-            inputArea.gameObject.SetActive(false);
-            placeholder.gameObject.SetActive(true);
-        }
-        else
-        {
-            inputArea.gameObject.SetActive(true);
-            placeholder.gameObject.SetActive(false);
-        }
+    #endregion
     }
-
-#endregion
 }
