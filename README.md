@@ -6,7 +6,7 @@ this Sample is realize the 'way-finding' demo using Azure Spatial Anchors.
 de:code 2020 のセッション内容をより深く理解し実践するのに役に立つサンプルコードやツールを提供ということで、Azure Spatial Anchorsの１つのユースケース「Way-Finding」を
 実現するテクニックを紹介します。
 
-![Demo](./images/WayfindingUsingASA)
+![Demo](./images/WayfindingUsingASA.gif)
 
 このアプリケーションはAzure Spatial Anchorsを活用して以下のコンテンツを実現します。
 
