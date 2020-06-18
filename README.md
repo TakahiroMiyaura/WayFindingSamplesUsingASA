@@ -33,7 +33,7 @@ de:code 2020 のセッション内容をより深く理解し実践するのに�
 
 #### ソフトウェア
 * Unity 2019.2.18f1
-* Visual Studio 2019(15.9.11)
+* Visual Studio 2019(16.5.3)
 * Azure Spatial anchors 2.2.0
 * Mixed Reality Toolkit 2.3.0
 * ARFoundation 2.0.2
