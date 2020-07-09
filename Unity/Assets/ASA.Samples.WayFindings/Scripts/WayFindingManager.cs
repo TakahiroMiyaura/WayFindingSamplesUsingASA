@@ -243,8 +243,8 @@ namespace Com.Reseul.ASA.Samples.WayFindings
         {
 #if UNITY_EDITOR
             EditorApplication.isPlaying = false;
-#elif UNITY_STANDALONE
-        Windows.ApplicationModel.Core.CoreApplication.Exit();
+#elif WINDOWS_UWP
+            Windows.ApplicationModel.Core.CoreApplication.Exit();
 #endif
         }
 
