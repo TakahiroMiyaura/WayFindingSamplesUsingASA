@@ -145,6 +145,8 @@ namespace Com.Reseul.ASA.Samples.WayFindings
                 {
                     //アンカーの可視化が完了していない場合はアンカーを生成する。
                     point = AnchorGenerateFactory.GenerateDestinationPointAnchor(RouteInfo.RootPointObjects);
+                    gameObject = point.gameObject;
+
                     lock (lockObj)
                     {
                         RouteInfo.LocatedAnchors.Add(identifier,
@@ -155,22 +157,24 @@ namespace Com.Reseul.ASA.Samples.WayFindings
                 else
                 {
                     //すでにアンカーが可視化されている場合はそのオブジェクトを取得する。
-                    point = RouteInfo.LocatedAnchors[identifier].AnchorObject.GetComponent<DestinationPointAnchor>();
+                    gameObject = RouteInfo.LocatedAnchors[identifier].AnchorObject;
+                    point = gameObject.GetComponent<DestinationPointAnchor>();
 
                     RouteInfo.LocatedAnchors[identifier] =
-                        new RouteGuideInformation.AnchorInfo(appProperties, point.gameObject,
+                        new RouteGuideInformation.AnchorInfo(appProperties, gameObject,
                             currentAnchorId.Equals(RouteGuideInformation.ANCHOR_ID_NOT_INITIALIZED));
                 }
 
                 currentAnchorId = identifier;
-
-                point.Identifier = identifier;
-                if (RouteGuideInformation.ANCHOR_TYPE_DESTINATION.Equals(anchorType))
+                if (point != null)
                 {
-                    point.DestinationTitle = destination;
+                    point.Identifier = identifier;
+                    if (RouteGuideInformation.ANCHOR_TYPE_DESTINATION.Equals(anchorType))
+                    {
+                        point.DestinationTitle = destination;
+                    }
                 }
 
-                gameObject = point.gameObject;
                 return true;
             }
             catch (Exception e)
