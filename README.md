@@ -1,6 +1,8 @@
 # WayFindingSamplesUsingASA
 this Sample is realize the 'way-finding' demo using Azure Spatial Anchors.
 
+[English](./README_en.md)
+
 ## Azure Spatial Anchorsのユースケース「Way-Finding」を実現するためのテクニック
 
 de:code 2020 のセッション内容をより深く理解し実践するのに役に立つサンプルコードやツールを提供ということで、Azure Spatial Anchorsの１つのユースケース「Way-Finding」を
@@ -28,15 +30,15 @@ de:code 2020 のセッション内容をより深く理解し実践するのに�
 
 #### ハード
 * PC
-  * Windows 10 Pro(OSバージョン 1903)
+  * Windows 10 Pro(OSバージョン 20H2)
 * HoloLens 2(HoloLensでも動作可)
 
 #### ソフトウェア
-* Unity 2019.2.18f1
-* Visual Studio 2019(16.5.3)
-* Azure Spatial anchors 2.2.0
-* Mixed Reality Toolkit 2.3.0
-* ARFoundation 2.0.2
+* [Unity 2019.4.X LTS](https://unity3d.com/jp/get-unity/download/archive)(リポジトリではUnity 2019.4.19f1を使用)
+* [Visual Studio 2019(16.5.3)](https://visualstudio.microsoft.com/ja/downloads/)
+* Azure Spatial anchors 2.8.1(Mixed Reality Feature Toolでセットアップ)
+* [Mixed Reality Toolkit 2.3.0](https://github.com/microsoft/MixedRealityToolkit-Unity/releases/tag/v2.3.0)
+* [Mixed Reality Feature Tool](https://www.microsoft.com/en-us/download/details.aspx?id=102778)
 
 ### 開発に必要な前準備
 #### Azure Spatial Anchorsの準備
@@ -47,15 +49,31 @@ de:code 2020 のセッション内容をより深く理解し実践するのに�
 
 ソフトウェアに記載の通り、このサンプルはいくつかのライブラリを利用します。
 現時点のバージョンは上記の通りですので各サイトから必要なモジュールをダウンロードしてください。
+Azure Spatial Anchorsの導入には「[Mixed Reality Feature Tool](https://www.microsoft.com/en-us/download/details.aspx?id=102778)」を使用します。
+サイトからダウンロードし、zipファイルを展開しておきます。
+
+* [(公式)Mixed Reality Feature Tool へようこそ](https://docs.microsoft.com/ja-jp/windows/mixed-reality/develop/unity/welcome-to-mr-feature-tool)
 
 ### 利用手順
 
 1. Gitからこのリポジトリをクローンまたはダウンロードする。
-2. WayFindingSamplesUsingASA\UnityをUnityで開く
+2. [Mixed Reality Feature Tool](https://www.microsoft.com/en-us/download/details.aspx?id=102778)を利用してAzure Spatial Anchorsを導入します。(Mixed Reality Feature ToolでもMRTKはセットアップ可能ですが、使用バージョンをセットアップできないため選択しないでください。)
+    1. MixedRealityFeatureTool.exeをダブルクリックして実行します。
+    2. [Start]をクリックします。
+    3. [Select project]セクションで手順1.でクローンしたリポジトリの中の[WayFindingSamplesUsingASA\Unity]を設定し[Discover Features]をクリックします。
+    4. [Discover features]セクションで以下のAzure Spatial Anchorsに関連するサービスにチェックを入れ、[Get Features]をクリックします。
+        * Azure Spatial Anchors SDK for Android 2.8.1
+        * Azure Spatial Anchors SDK Core 2.8.1
+        * Azure Spatial Anchors SDK for iOS 2.8.1
+        * Azure Spatial Anchors SDK for Windows 2.8.1
+    5. [Import features]セクションで先ほど選択した4つのコンポーネントが選択されていることを確認し[Import]をクリックします。
+    6. [Review and Approve]セクションでは[Approve]をクリックして適用します。
+    7. [Exit]をクリックしてアプリケーションを終了します。
+2. WayFindingSamplesUsingASA\UnityをUnityで開きます。
 3. [Asset]-[Import Package]-[Custom Package]を開きあらかじめダウンロードした[Microsoft.MixedReality.Toolkit.Unity.Foundation.2.3.0.unitypackage](https://github.com/microsoft/MixedRealityToolkit-Unity/releases/tag/v2.3.0) をインポートします。
-4. [Asset]-[Import Package]-[Custom Package]を開きあらかじめダウンロードした[AzureSpatialAnchors.unitypackage](https://github.com/Azure/azure-spatial-anchors-samples/releases/tag/v2.2.1) をインポートします。
+4. [MRTK Project Configurator]の項目をすべてチェックして適用します。
 5. WayFindingSamplesUsingASA\Unity\Assets\ASA.Samples.WayFindings\Scenes\SampleScene.unityを開く
-6. Hierarchyのmodule\AnchorModule\Mainを選択しInspectorパネル内の[Spatial Anchor Manager]のAccount IDとKeyを作成済みのAzure Spatial Anchorsで設定します。
+6. Projectパネルの[AzureSpatialAnchors.SDK\Resources\SpatialAnchorConfig]を選択し、Inspectorパネル内の[Credentials]にAccount IDとKey、domainを設定します。
 7. [File]-[Build Settings]を開き、以下の設定を行います。
     * PlatformをUniversal Windows Platformに変更する
     * 上部メニューの[Mixed Reality Toolkit]-[Utilities]-[Configure Unity Project]を選択しダイアログのチェックがすべてOKになるように設定する。
@@ -68,7 +86,7 @@ de:code 2020 のセッション内容をより深く理解し実践するのに�
            * RemovableStorage
            * SpatialPerception 
 8. ビルドを実施し任意のフォルダにビルド資産を展開します。
-9.  ビルドが完了後Visual Studioでソリューションファイルを開き、HoloLensにデプロイします。
+9. ビルドが完了後Visual Studioでソリューションファイルを開き、HoloLensにデプロイします。
 
 ※リポジトリのunitypackageフォルダにはGithub上で実装した部分のみをエクスポートしたものです。必要に応じて利用してください。
 
